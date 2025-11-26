@@ -7,6 +7,7 @@ import pandas as pd
 from datetime import datetime
 from Corpus import Corpus
 from DocumentFactory import DocumentFactory
+from SearchEngine import SearchEngine
 
 THEME = "machine learning"
 NB_DOCS_ARXIV = 5
@@ -115,3 +116,59 @@ if nom_auteur in corpus.authors:
     print(f"Taille moyenne des documents: {auteur.tailleMoy():.2f} caractères")
 else:
     print("Auteur non trouvé dans le corpus.")
+
+# TD6
+
+print("\n1. Test de la fonction search:")
+mot_recherche = "learning"
+passages = corpus.search(mot_recherche)
+print(f"Passages contenant '{mot_recherche}' : {len(passages)} trouvés")
+for i, passage in enumerate(passages[:3]):
+    print(f"  {i+1}. ...{passage}...")
+
+print("\n2. Test de la fonction concorde:")
+concordancier = corpus.concorde("machine", taille_contexte=40)
+print(concordancier.head(10))
+
+print("\n3. Statistiques textuelles complètes:")
+freq_table = corpus.stats(n=15)
+
+# TD7: moteur de recherche
+
+moteur = SearchEngine(corpus)
+
+# Afficher les statistiques du vocabulaire
+print("\n--- Statistiques du vocabulaire ---")
+moteur.afficher_stats_vocab()
+
+# Test du moteur de recherche
+print("\n--- Test du moteur de recherche ---")
+requete = "deep learning neural network"
+print(f"\nRecherche pour : '{requete}'")
+resultats = moteur.search(requete, nb_resultats=5)
+
+if len(resultats) > 0:
+    print(f"\n{len(resultats)} résultats trouvés :")
+    print(resultats[['titre', 'auteur', 'score', 'type']].to_string(index=False))
+else:
+    print("Aucun résultat trouvé.")
+
+print("\n-------------moteur de recherche---------------")
+while True:
+    requete_user = input("\nEntrez votre requête (ou 'quit' pour quitter) : ")
+    if requete_user.lower() == 'quit':
+        break
+    
+    resultats = moteur.search(requete_user, nb_resultats=5)
+    
+    if len(resultats) > 0:
+        print(f"\n{len(resultats)} résultats trouvés :")
+        for idx, row in resultats.iterrows():
+            print(f"\n{idx+1}. [{row['type']}] {row['titre']}")
+            print(f"   Auteur: {row['auteur']}")
+            print(f"   Score: {row['score']:.4f}")
+            print(f"   URL: {row['url']}")
+    else:
+        print("Aucun résultat trouvé.")
+
+print("\nLa recherche est terminée!")
