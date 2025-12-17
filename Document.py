@@ -10,6 +10,7 @@ class Document:
         self.date = date
         self.url = url
         self.texte = texte
+        self.type = "Document"
     
     def __str__(self):
         return self.titre
@@ -22,7 +23,7 @@ class Document:
         print(f"Texte: {self.texte[:100]}...")
     
     def getType(self): # Type générique
-        return "Document"
+        return self.type
 
 
 class RedditDocument(Document):
@@ -30,6 +31,7 @@ class RedditDocument(Document):
     def __init__(self, titre, auteur, date, url, texte, num_comments):
         super().__init__(titre, auteur, date, url, texte)
         self.num_comments = num_comments
+        self.type = "Reddit"
     
     def __str__(self):
         return f"[Reddit] {self.titre}"
@@ -39,9 +41,6 @@ class RedditDocument(Document):
     
     def set_num_comments(self, num_comments):
         self.num_comments = num_comments
-    
-    def getType(self):
-        return "Reddit"
     
     def afficher(self):
         super().afficher()
@@ -53,6 +52,7 @@ class ArxivDocument(Document):
     def __init__(self, titre, auteur, date, url, texte, co_auteurs):
         super().__init__(titre, auteur, date, url, texte)
         self.co_auteurs = co_auteurs
+        self.type = "Arxiv"
     
     def __str__(self):
         return f"[Arxiv] {self.titre}"
@@ -62,9 +62,6 @@ class ArxivDocument(Document):
     
     def set_co_auteurs(self, co_auteurs):
         self.co_auteurs = co_auteurs
-    
-    def getType(self):
-        return "Arxiv"
     
     def afficher(self):
         super().afficher()
