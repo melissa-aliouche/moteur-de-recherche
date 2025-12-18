@@ -10,6 +10,8 @@ Ce projet implémente un moteur de recherche capable de récupérer et d'analyse
 
 Le projet met en œuvre des concepts avancés de programmation orientée objet, des patrons de conception (Singleton, Factory), des techniques d'analyse textuelle et un moteur de recherche basé sur TF-IDF.
 
+Le projet a ensuite été étendu (TD8–TD10) avec une interface Jupyter interactive (ipywidgets) et des analyses avancées (filtres, évolution temporelle et OKAPI‑BM25).
+
 ## Fonctionnalités
 
 - Récupération automatique de documents depuis Reddit et Arxiv
@@ -24,16 +26,21 @@ Le projet met en œuvre des concepts avancés de programmation orientée objet, 
 - Calcul de statistiques textuelles (vocabulaire, fréquences TF/DF)
 - Moteur de recherche avec matrices TF et TF-IDF
 - Recherche par similarité cosinus
+- Interface graphique sous Jupyter Notebook
+- Comparaison de sous-corpus (par auteur / type)
+- Évolution temporelle des mots
+- Analyse du vocabulaire avec scores TF-IDF et OKAPI-BM25
 
 ## Structure du projet
 ```
 .
-├── Author.py           # Gestion des auteurs et leurs documents
-├── Document.py         # Classes Document, RedditDocument, ArxivDocument
-├── Corpus.py           # Singleton pour gérer l'ensemble des documents
-├── DocumentFactory.py  # Factory pour créer les documents par type
-├── SearchEngine.py     # Moteur de recherche avec TF-IDF
-└── main.py             # Programme principal
+├── Author.py                # Gestion des auteurs et leurs documents
+├── Document.py              # Classes Document, RedditDocument, ArxivDocument
+├── Corpus.py                # Singleton pour gérer l'ensemble des documents
+├── DocumentFactory.py       # Factory pour créer les documents par type
+├── SearchEngine.py          # Moteur de recherche avec TF-IDF
+├── main.py                  # Programme principal
+└── Interface_Jupyter.ipynb  # Notebook TD8–TD10 (widgets + analyses)
 ```
 
 ## Installation
@@ -67,6 +74,18 @@ reddit = praw.Reddit(
 ```bash
 python main.py
 ```
+
+### Notebook (TD7–TD10)
+
+```bash
+
+jupyter notebook
+
+# ouvrir Interface_Jupyter.ipynb
+
+```
+
+> Le notebook utilise un fichier `corpus.tsv` (créé par `main.py` s'il n'existe pas).
 
 ### Exemple de workflow
 
@@ -169,8 +188,9 @@ Document (classe parente)
 - load(fichier) : Charge un corpus depuis un fichier
 - search(mot_clef) : Recherche des passages contenant un mot-clé
 - concorde(expression, taille_contexte) : Crée un concordancier
-- nettoyer_texte(texte) : Nettoie et normalise un texte
+- nettoyer_texte(texte, remove_stopwords) : Nettoie et normalise un texte
 - stats(n) : Affiche les statistiques textuelles du corpus
+- set_stopwords(enabled) : Active/désactive la suppression des stopwords
 
 ### Classe SearchEngine
 - search(mots_clefs, nb_resultats) : Recherche les documents pertinents
@@ -195,16 +215,27 @@ Compte le nombre d'occurrences de chaque terme dans chaque document.
 
 ### TF-IDF (Term Frequency - Inverse Document Frequency)
 Pondère l'importance d'un terme en fonction de sa rareté dans le corpus :
-```
-TF-IDF = TF * log(N / DF)
-```
-où N est le nombre total de documents et DF le nombre de documents contenant le terme.
+
+$$
+\mathrm{TF\text{-}IDF} = \mathrm{TF}\cdot \log\left(\frac{N}{\mathrm{DF}}\right)
+$$
+
+où $N$ est le nombre total de documents et $\mathrm{DF}$ le nombre de documents contenant le terme.
 
 ### Similarité Cosinus
 Mesure la similarité entre la requête et les documents :
-```
-similarité = (A · B) / (||A|| * ||B||)
-```
+
+$$
+\mathrm{similarité}=\frac{A\cdot B}{\lVert A\rVert\,\lVert B\rVert}
+$$
+
+### OKAPI-BM25
+Mesure plus robuste que TF-IDF lorsque les documents ont des longueurs différentes :
+
+$$
+\mathrm{score}(D,Q)=\sum_{t\in Q} IDF(t)\cdot
+\frac{f(t,D)\,(k_1+1)}{f(t,D)+k_1\left(1-b+b\cdot\frac{|D|}{avgdl}\right)}
+$$
 
 ## Contexte pédagogique
 
@@ -217,6 +248,8 @@ Ce projet a été développé dans le cadre des TD3, TD4, TD5, TD6 et TD7 :
 | TD5 | Patrons avancés | Héritage, Singleton, Factory |
 | TD6 | Analyse textuelle | Expressions régulières, concordancier, statistiques TF/DF |
 | TD7 | Moteur de recherche | Matrices TF-IDF, similarité cosinus, recherche vectorielle |
+| TD8 | Interface Notebook | Jupyter, ipywidgets, tqdm, découpage en phrases |
+| TD9–TD10 | Projet libre | Filtres, comparaison de corpus, évolution temporelle, TF-IDF & BM25 |
 
 ## Technologies utilisées
 
@@ -227,6 +260,10 @@ Ce projet a été développé dans le cadre des TD3, TD4, TD5, TD6 et TD7 :
 - SciPy (matrices sparse)
 - xmltodict (parsing XML pour Arxiv)
 - re (expressions régulières)
+- Jupyter Notebook (interface interactive)
+- ipywidgets (widgets UI)
+- tqdm (barres de progression)
+- Matplotlib (visualisations)
 
 ## Améliorations possibles
 
@@ -240,5 +277,6 @@ Ce projet a été développé dans le cadre des TD3, TD4, TD5, TD6 et TD7 :
 
 ## Auteur
 
-Mélissa Aliouche  
+Mélissa Aliouche
+Zehua Zheng
 Année universitaire 2025-2026
