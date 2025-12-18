@@ -2,6 +2,7 @@
 
 from Document import Document
 from Author import Author
+from DocumentFactory import DocumentFactory
 import pandas as pd
 import re
 
@@ -79,10 +80,22 @@ class Corpus:
         df = self.to_dataframe()
         df.to_csv(filename, sep="\t", index=False)
     
-    @staticmethod
-    def load(filename):
+    @classmethod
+    def load(cls, filename, nom="Corpus chargé"):
+        """Charge un corpus depuis un fichier TSV et retourne un objet Corpus"""
         df = pd.read_csv(filename, sep="\t")
-        return df
+        corpus = cls(nom)
+        for _, row in df.iterrows():
+            doc = DocumentFactory.create_document(
+                doc_type=row.get('type', 'document').lower(),
+                titre=row['titre'],
+                auteur=row['auteur'],
+                date=row['date'],
+                url=row.get('url', ''),
+                texte=row['texte']
+            )
+            corpus.add(doc)
+        return corpus
     
     def _construire_texte_total(self): # Concatène tous les textes des documents
         if self._texte_total is None:
