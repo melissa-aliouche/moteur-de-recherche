@@ -6,6 +6,18 @@ from DocumentFactory import DocumentFactory
 import pandas as pd
 import re
 
+# --- Stopwords EN (petite liste, facile à étendre) ---
+STOPWORDS_EN = {
+    "a","an","the","and","or","but","if","then","else",
+    "to","of","in","on","for","with","as","at","by","from",
+    "is","am","are","was","were","be","been","being",
+    "it","this","that","these","those",
+    "i","you","he","she","we","they","me","him","her","us","them",
+    "my","your","his","their","our",
+    "not","no","so","too","very",
+    "can","could","should","would","will","just"
+}
+
 class Corpus:
     _instance = None # Variable de classe pour le singleton
     
@@ -20,6 +32,8 @@ class Corpus:
             cls._instance._texte_total = None # cache du texte combiné de tout le corpus
             cls._instance._vocabulaire = None 
             cls._instance._freq = None
+            cls._instance.stopwords_enabled = False
+            cls._instance.stopwords = STOPWORDS_EN
         return cls._instance
     
     def __init__(self, nom):
@@ -126,12 +140,21 @@ class Corpus:
         
         return pd.DataFrame(resultats)
     
-    def nettoyer_texte(self, texte):
+    def nettoyer_texte(self, texte, remove_stopwords=None):
         texte = texte.lower()
         texte = texte.replace('\n', ' ')
         texte = re.sub(r'[^\w\s]', ' ', texte)
         texte = re.sub(r'\d+', '', texte)
         texte = re.sub(r'\s+', ' ', texte)
+
+        # Stopwords (optionnel)
+        if remove_stopwords is None:
+            remove_stopwords = self.stopwords_enabled
+
+        if remove_stopwords:
+            tokens = [w for w in texte.split() if w not in self.stopwords]
+            texte = " ".join(tokens)
+
         return texte.strip()
     
     def _construire_vocabulaire_et_freq(self):
@@ -185,3 +208,9 @@ class Corpus:
         print(self._freq.head(n).to_string(index=False))
         
         return self._freq
+
+    def set_stopwords(self, enabled: bool):
+        """Active/désactive la suppression des stopwords (impacte stats + moteur)"""
+        self.stopwords_enabled = bool(enabled)
+        self._vocabulaire = None
+        self._freq = None
