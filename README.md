@@ -277,6 +277,7 @@ Ce projet a été développé dans le cadre des TD3, TD4, TD5, TD6 et TD7 :
 
 ## Auteur
 
-Mélissa Aliouche
-Zehua Zheng
-Année universitaire 2025-2026
+- Mélissa Aliouche  
+- Zehua Zheng  
+
+Année universitaire 2025–2026
