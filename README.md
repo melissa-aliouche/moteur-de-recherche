@@ -2,6 +2,8 @@
 
 Un moteur de recherche complet pour récupérer, structurer, analyser et rechercher des documents provenant de Reddit et Arxiv
 
+- **Rapport (PDF)** : [Rapport_Projet_Python.pdf](./Projet_Python_Melissa_Aliouche-Zehua_Zheng.pdf)
+
 ## À propos
 
 Ce projet implémente un moteur de recherche capable de récupérer et d'analyser des documents provenant de deux sources principales :
